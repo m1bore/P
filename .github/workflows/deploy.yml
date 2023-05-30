@@ -1,0 +1,32 @@
+name: Despliegue de GitHub Pages #nombre del workflow
+
+on:
+  push:
+    branches:
+      - main  # elegimos la rama de la que hacemos push
+
+jobs: 
+  build-and-deploy:
+    runs-on: ubuntu-latest #máquina virtual que ejecutará los comandos
+
+    steps:
+    - name: Checkout del repositorio
+      uses: actions/checkout@v3
+
+    - name: Install Node.js #Necesitamos node para ejecutar la página web
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies #Instalamos npm para ejecuta node
+      run: npm ci
+
+    - name: Build project #Construimos el proyecto
+      run: npm run build
+
+    - name: Desplegar en GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3 #Usamos el código de este usuario tan ambale para hacer el deploy
+      with:
+        personal_token: ${{ secrets.PERSONAL_TOKEN }} #variable en la que ese almacena nuestro token para ser usado
+        branch: gh-pages  # Rama en la que se desplegará la página web
+        folder: dist  # Carpeta que contiene los archivos estáticos de la página web
